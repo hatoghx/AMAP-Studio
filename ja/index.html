@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AMAP-Studio ドキュメント</title>
+<meta name="description" content="AMAP-Studio 公式ドキュメント - Unreal Engine 5.8 向け PMX/VMD パイプライン、SDEF 変形、Bullet 物理、ライブ入力プラグイン。">
+<link rel="icon" type="image/png" href="../assets/icon.png">
+<link rel="alternate" hreflang="en" href="../">
+<link rel="alternate" hreflang="ja" href="./">
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Yu Gothic UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --bg-page: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-sidebar: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-code: #0f172a;
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-subtle: #eff6ff;
+  --primary-border: #bfdbfe;
+  --accent-purple: #7c3aed;
+  --badge-bg: #e2e8f0;
+  --badge-text: #334155;
+  --callout-info-bg: #f0fdf4;
+  --callout-info-border: #86efac;
+  --callout-info-text: #166534;
+  --callout-warn-bg: #fffbeb;
+  --callout-warn-border: #fcd34d;
+  --callout-warn-text: #92400e;
+  --header-height: 64px;
+  --sidebar-width: 280px;
+  --toc-width: 240px;
+}
+
+[data-theme="dark"] {
+  --bg-page: #0b0f17;
+  --bg-surface: #111827;
+  --bg-sidebar: #0e1420;
+  --bg-card: #131c2e;
+  --bg-code: #030712;
+  --border-subtle: #1f2937;
+  --border-strong: #374151;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-light: #64748b;
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-subtle: rgba(59, 130, 246, 0.12);
+  --primary-border: rgba(59, 130, 246, 0.3);
+  --accent-purple: #a855f7;
+  --badge-bg: #1e293b;
+  --badge-text: #cbd5e1;
+  --callout-info-bg: rgba(22, 101, 52, 0.15);
+  --callout-info-border: rgba(34, 197, 94, 0.3);
+  --callout-info-text: #86efac;
+  --callout-warn-bg: rgba(146, 64, 14, 0.15);
+  --callout-warn-border: rgba(245, 158, 11, 0.3);
+  --callout-warn-text: #fde68a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 15px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-page);
+  color: var(--text-main);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+header.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+
+.nav-left { display: flex; align-items: center; gap: 14px; }
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+.nav-brand img { width: 32px; height: 32px; border-radius: 6px; }
+.nav-badge {
+  background: var(--primary-subtle);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.nav-right { display: flex; align-items: center; gap: 14px; }
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+.nav-link:hover { color: var(--primary); }
+
+.lang-dropdown { position: relative; }
+.lang-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.lang-btn:hover { border-color: var(--border-strong); color: var(--text-main); }
+.lang-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  min-width: 130px;
+  padding: 4px;
+  display: none;
+  z-index: 110;
+}
+.lang-dropdown:hover .lang-menu { display: block; }
+.lang-item {
+  display: block;
+  padding: 8px 12px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+.lang-item:hover { background: var(--bg-sidebar); color: var(--text-main); }
+.lang-item.active { color: var(--primary); font-weight: 600; background: var(--primary-subtle); }
+
+.theme-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+.theme-btn:hover { border-color: var(--border-strong); color: var(--text-main); }
+
+.layout {
+  display: flex;
+  margin-top: var(--header-height);
+  min-height: calc(100vh - var(--header-height));
+}
+
+aside.sidebar {
+  width: var(--sidebar-width);
+  position: fixed;
+  top: var(--header-height);
+  bottom: 0;
+  left: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  overflow-y: auto;
+  padding: 24px 16px;
+}
+
+.menu-group { margin-bottom: 24px; }
+.menu-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 0.05em;
+  padding: 0 10px 8px;
+}
+.menu-list { list-style: none; }
+.menu-item a {
+  display: block;
+  padding: 6px 12px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+.menu-item a:hover {
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+.menu-item a.active {
+  background: var(--primary-subtle);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+main.content {
+  margin-left: var(--sidebar-width);
+  margin-right: var(--toc-width);
+  flex: 1;
+  padding: 40px 48px 80px;
+  max-width: 960px;
+}
+
+aside.toc {
+  width: var(--toc-width);
+  position: fixed;
+  top: var(--header-height);
+  bottom: 0;
+  right: 0;
+  border-left: 1px solid var(--border-subtle);
+  padding: 28px 20px;
+  overflow-y: auto;
+}
+.toc-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+}
+.toc-list { list-style: none; font-size: 0.85rem; }
+.toc-list li { margin-bottom: 6px; }
+.toc-list a {
+  color: var(--text-muted);
+  text-decoration: none;
+  display: block;
+  transition: color 0.15s;
+}
+.toc-list a:hover { color: var(--primary); }
+
+.hero {
+  padding: 32px 0 40px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 40px;
+}
+.hero-tag {
+  display: inline-block;
+  background: var(--primary-subtle);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+.hero h1 {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.hero p {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  max-width: 680px;
+  margin-bottom: 24px;
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.btn-primary { background: var(--primary); color: #ffffff; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-secondary {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text-main);
+}
+.btn-secondary:hover { background: var(--bg-sidebar); }
+
+section { margin-bottom: 56px; }
+h2.section-heading {
+  font-size: 1.65rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+h3.sub-heading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 28px 0 12px;
+}
+p { margin-bottom: 14px; }
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+.card h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0; }
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  margin: 16px 0;
+  background: var(--bg-surface);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  text-align: left;
+}
+th {
+  background: var(--bg-sidebar);
+  color: var(--text-main);
+  padding: 10px 14px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-subtle);
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+tr:last-child td { border-bottom: none; }
+td strong { color: var(--text-main); }
+
+code {
+  font-family: var(--font-mono);
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.callout {
+  border-left: 4px solid;
+  padding: 14px 18px;
+  border-radius: 0 8px 8px 0;
+  margin: 18px 0;
+  font-size: 0.92rem;
+}
+.callout-info {
+  background: var(--callout-info-bg);
+  border-color: var(--callout-info-border);
+  color: var(--callout-info-text);
+}
+.callout-warn {
+  background: var(--callout-warn-bg);
+  border-color: var(--callout-warn-border);
+  color: var(--callout-warn-text);
+}
+
+.step-list { list-style: none; counter-reset: step-counter; margin: 20px 0; }
+.step-item {
+  position: relative;
+  padding-left: 44px;
+  margin-bottom: 20px;
+}
+.step-item::before {
+  counter-increment: step-counter;
+  content: counter(step-counter);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  background: var(--primary);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 1080px) {
+  aside.toc { display: none; }
+  main.content { margin-right: 0; }
+}
+
+@media (max-width: 768px) {
+  aside.sidebar { display: none; }
+  main.content { margin-left: 0; padding: 24px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="nav-left">
+    <a href="#" class="nav-brand">
+      <img src="../assets/icon.png" alt="AMAP-Studio ロゴ">
+      <span>AMAP-Studio</span>
+    </a>
+    <span class="nav-badge">v1.0.0</span>
+  </div>
+  <div class="nav-right">
+    <a href="#quickstart" class="nav-link">導入手順</a>
+    <a href="#features" class="nav-link">主要機能</a>
+    <a href="#technical" class="nav-link">技術仕様</a>
+    <div class="lang-dropdown">
+      <button class="lang-btn" aria-label="言語の選択">
+        <span>言語：日本語</span>
+        <span>▼</span>
+      </button>
+      <div class="lang-menu">
+        <a href="../" class="lang-item">English</a>
+        <a href="./" class="lang-item active">日本語</a>
+      </div>
+    </div>
+    <a href="https://github.com/hatoghx/AMAP-Studio" target="_blank" class="nav-link">GitHub</a>
+    <button class="theme-btn" id="themeToggle" aria-label="テーマ切り替え">
+      <span id="themeLabel">ダークモード</span>
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="menu-group">
+      <div class="menu-title">導入ガイド</div>
+      <ul class="menu-list">
+        <li class="menu-item"><a href="#overview">概要</a></li>
+        <li class="menu-item"><a href="#requirements">動作環境</a></li>
+        <li class="menu-item"><a href="#quickstart">インストール</a></li>
+      </ul>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">機能一覧</div>
+      <ul class="menu-list">
+        <li class="menu-item"><a href="#features">主要機能</a></li>
+        <li class="menu-item"><a href="#pipeline">モデル＆モーション処理</a></li>
+        <li class="menu-item"><a href="#physics">物理演算＆SDEF変形</a></li>
+        <li class="menu-item"><a href="#live">ライブ＆モーションキャプチャ</a></li>
+      </ul>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">エディタ連携</div>
+      <ul class="menu-list">
+        <li class="menu-item"><a href="#menu">エディタメニュー</a></li>
+        <li class="menu-item"><a href="#dependencies">依存関係</a></li>
+      </ul>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">リファレンス</div>
+      <ul class="menu-list">
+        <li class="menu-item"><a href="#technical">技術仕様</a></li>
+        <li class="menu-item"><a href="#modules">コードモジュール</a></li>
+        <li class="menu-item"><a href="#thirdparty">サードパーティ情報</a></li>
+        <li class="menu-item"><a href="#support">サポート窓口</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="hero" id="overview">
+      <span class="hero-tag">Unreal Engine 5.8 実装パイプライン</span>
+      <h1>AMAP-Studio</h1>
+      <p>Unreal Engine 5.8 上での高精度 PMX アセット読み込み、VMD モーションおよびカメラのシーケンス化、リアルタイム SDEF GPU 変形、Bullet 物理シミュレーション、ライブモーションキャプチャ環境を提供します。</p>
+      <div class="hero-actions">
+        <a href="#quickstart" class="btn btn-primary">クイックスタート</a>
+        <a href="https://github.com/hatoghx/AMAP-Studio" target="_blank" class="btn btn-secondary">GitHub を開く</a>
+      </div>
+    </div>
+
+    <section id="requirements">
+      <h2 class="section-heading">動作環境</h2>
+      <p>AMAP-Studio は Unreal Engine 5.8 の Windows 64 ビット環境に最適化されています。</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>エンジンバージョン</th><td>Unreal Engine 5.8</td></tr>
+          <tr><th>オペレーティングシステム</th><td>Windows 10 / 11（64 ビット）</td></tr>
+          <tr><th>対象プラットフォーム</th><td>Win64（エディタツールおよびランタイムノード）</td></tr>
+          <tr><th>Mac / Linux 対応</th><td>非対応（Win64 専用の最適化）</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="quickstart">
+      <h2 class="section-heading">インストール手順</h2>
+      <ol class="step-list">
+        <li class="step-item">
+          <strong>プラグインの配置</strong>
+          <p>Fab マーケットプレイスのライブラリから導入するか、<code>AMAP-Studio</code> フォルダをプロジェクトの <code>Plugins/</code> フォルダへ配置します。</p>
+        </li>
+        <li class="step-item">
+          <strong>プラグインの有効化</strong>
+          <p>Unreal Engine 5.8 でプロジェクトを開き、<strong>編集 &gt; プラグイン</strong> を開いて Animation カテゴリにある <strong>AMAP Studio</strong> を有効にします。</p>
+        </li>
+        <li class="step-item">
+          <strong>エディタの再起動</strong>
+          <p>ダイアログに従ってエディタを再起動します。メインメニューバーに専用の <strong>AMAP</strong> メニューが追加されます。</p>
+        </li>
+      </ol>
+      <div class="callout callout-info">
+        <strong>完全統合構造：</strong> AMAP-Studio は Unreal Engine の Slate メニューおよびアセットインポート機構に直接組み込まれています。外部 exe やバックグラウンド常駐サービスは不要です。
+      </div>
+    </section>
+
+    <section id="features">
+      <h2 class="section-heading">主要機能</h2>
+      <div class="cards-grid">
+        <div class="card">
+          <h4>PMX モデル読み込み</h4>
+          <p>スケルトン構造、マテリアル対応、モーフターゲット、剛体設定、表示枠の再構築を完全に実行します。</p>
+        </div>
+        <div class="card">
+          <h4>SDEF GPU デフォーマ</h4>
+          <p>Deformer Graph を通じて球状スキニング補間（SDEF）を GPU 上でリアルタイムに変形処理します。</p>
+        </div>
+        <div class="card">
+          <h4>VMD シーケンス化</h4>
+          <p>モーションおよびカメラアニメーションを高精度にレベルシーケンスへ取り込み、カーブ制御を再現します。</p>
+        </div>
+        <div class="card">
+          <h4>Bullet 物理シミュレーション</h4>
+          <p>剛体、制約ジョイント、ソフトボディのシミュレーションとエディタ内可視化機能を提供します。</p>
+        </div>
+        <div class="card">
+          <h4>Parent Constraint</h4>
+          <p>対象アクター、対象ボーン、重み付けキーフレーム、オフセット保持を備えたコンポーネントです。</p>
+        </div>
+        <div class="card">
+          <h4>ライブキャプチャ入力</h4>
+          <p>VMC プロトコル受信、XR ポーズ入力、MetaHuman Animator を用いた動画モーキャプに対応します。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pipeline">
+      <h2 class="section-heading">モデル＆モーション処理</h2>
+      <h3 class="sub-heading">PMX ボーンソルバー＆補正</h3>
+      <p>インバースキネマティクス（IK）、付与親連動、捩りボーンの安定化を自動処理します。捩り位置補正機能により、上下関節の直線上に捩りボーンの位置を正しく再配置します。</p>
+      <h3 class="sub-heading">VMD カメラシーケンス</h3>
+      <p>カメラの視野角（FOV）、焦点距離、注視点軌道を Unreal Engine の座標系に適合させてレベルシーケンス化します。</p>
+    </section>
+
+    <section id="physics">
+      <h2 class="section-heading">物理演算＆SDEF変形</h2>
+      <p>静的リンクされた Bullet Physics 3 SDK を内蔵しており、Chaos 物理と併用して剛体衝突やクロス・ヘア等のシミュレーションを実行できます。</p>
+      <div class="callout callout-warn">
+        <strong>Deformer Graph の要件：</strong> SDEF 変形には、Unreal Engine 5.8 に同梱されている Compute Framework および Deformer Graph プラグインが必要です。
+      </div>
+    </section>
+
+    <section id="live">
+      <h2 class="section-heading">ライブ＆ネットワーク入力</h2>
+      <p>ライブキャプチャ機能の実行時のみ、ローカル UDP ソケットを受信ポートとして開放します。</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>プロトコル／機能</th><th>既定ポート</th><th>役割</th></tr>
+          <tr><td><strong>フェイスメッシュ受信</strong></td><td>UDP ポート 39541</td><td>顔面ブレンドシェイプの高頻度受信</td></tr>
+          <tr><td><strong>VMC モーション受信</strong></td><td>設定可能 UDP ポート</td><td>全身トラッキングのリアルタイム同期</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="menu">
+      <h2 class="section-heading">エディタメニュー機能</h2>
+      <p>メインメニューバーの <strong>AMAP</strong> メニューから以下の機能が利用可能です。</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>項目名</th><th>機能内容</th></tr>
+          <tr><td><strong>Twist Position Correction</strong></td><td>捩りボーンの位置を上下関節の直線上に自動補正します。</td></tr>
+          <tr><td><strong>Reapply PMX SDEF</strong></td><td>読み込み済みモデルに対して SDEF 変形アセットを再適用します。</td></tr>
+          <tr><td><strong>PMX Post-Import Settings</strong></td><td>マテリアル適用ルール、法線設定、アセット階層を設定します。</td></tr>
+          <tr><td><strong>PMX Rig Import Settings</strong></td><td>IK 計算精度や Control Rig パラメータの対応関係を設定します。</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="dependencies">
+      <h2 class="section-heading">依存関係</h2>
+      <h3 class="sub-heading">標準同梱エンジンプラグイン（UE 5.8 標準）</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>プラグイン</th><th>用途</th></tr>
+          <tr><td><code>IKRig</code>, <code>ControlRig</code></td><td>アニメーションリグ生成および IK 計算。</td></tr>
+          <tr><td><code>ComputeFramework</code>, <code>DeformerGraph</code></td><td>SDEF 変形シェーダーの GPU 実行。</td></tr>
+          <tr><td><code>ElectraCodecs</code>, <code>AV1DecoderElectra</code>, <code>VPxDecoderElectra</code>, <code>OpusDecoderElectra</code></td><td>モーキャプ動画の取り込みデコード。</td></tr>
+        </table>
+      </div>
+      <h3 class="sub-heading">任意連携プラグイン</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>プラグイン</th><th>用途</th></tr>
+          <tr><td><code>MetaHuman</code>, <code>ImgMedia</code></td><td>マーカーレス動画モーションキャプチャ。</td></tr>
+          <tr><td><code>VRM4U</code></td><td>MToon 等の専用トゥーンシェーダー連携。</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="technical">
+      <h2 class="section-heading">技術仕様</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>ネットワーク同期</th><td>非対応</td></tr>
+          <tr><th>対応開発プラットフォーム</th><td>Windows：対応、Mac：非対応</td></tr>
+          <tr><th>対応ビルド対象</th><td>Win64</td></tr>
+          <tr><th>ブループリント数</th><td>0（完全ネイティブ C++ 構成）</td></tr>
+          <tr><th>C++ クラス構成</th><td>28 UCLASS、27 USTRUCT、8 UENUM、各種ヘルパー</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="modules">
+      <h2 class="section-heading">コードモジュール構成</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>モジュール名</th><th>タイプ</th><th>読み込みフェーズ</th></tr>
+          <tr><td><code>AMAP_Runtime</code></td><td>Runtime</td><td>Default</td></tr>
+          <tr><td><code>AMAP_BulletRuntime</code></td><td>Runtime</td><td>Default</td></tr>
+          <tr><td><code>AMAP_Editor</code></td><td>UncookedOnly</td><td>PreDefault</td></tr>
+          <tr><td><code>AMAP_BulletEditor</code></td><td>UncookedOnly</td><td>Default</td></tr>
+          <tr><td><code>AMAP_Importer</code></td><td>Editor</td><td>PostEngineInit</td></tr>
+          <tr><td><code>AMAP_Deform</code></td><td>Editor</td><td>PostEngineInit</td></tr>
+          <tr><td><code>AMAP_VmdCamera</code></td><td>Editor</td><td>Default</td></tr>
+          <tr><td><code>AMAP_MetaHumanMocap</code></td><td>Editor</td><td>None</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="thirdparty">
+      <h2 class="section-heading">サードパーティ著作権表示</h2>
+      <p>AMAP-Studio は剛体およびソフトボディの物理演算に zlib ライセンスの Bullet Physics 3 SDK を利用しています。</p>
+    </section>
+
+    <section id="support">
+      <h2 class="section-heading">サポート窓口</h2>
+      <p>不具合報告やご要望は GitHub リポジトリの Issue にて承ります。</p>
+      <p><a href="https://github.com/hatoghx/AMAP-Studio/issues" target="_blank" class="btn btn-secondary">GitHub Issue を開く</a></p>
+    </section>
+  </main>
+
+  <aside class="toc">
+    <div class="toc-title">目次</div>
+    <ul class="toc-list">
+      <li><a href="#overview">概要</a></li>
+      <li><a href="#requirements">動作環境</a></li>
+      <li><a href="#quickstart">インストール</a></li>
+      <li><a href="#features">主要機能</a></li>
+      <li><a href="#pipeline">モデル＆モーション</a></li>
+      <li><a href="#physics">物理演算＆SDEF</a></li>
+      <li><a href="#live">ライブ入力</a></li>
+      <li><a href="#menu">エディタメニュー</a></li>
+      <li><a href="#dependencies">依存関係</a></li>
+      <li><a href="#technical">技術仕様</a></li>
+      <li><a href="#modules">コードモジュール</a></li>
+      <li><a href="#thirdparty">サードパーティ情報</a></li>
+      <li><a href="#support">サポート</a></li>
+    </ul>
+  </aside>
+</div>
+
+<script>
+const themeBtn = document.getElementById('themeToggle');
+const themeLabel = document.getElementById('themeLabel');
+const html = document.documentElement;
+
+function setTheme(dark) {
+  if (dark) {
+    html.setAttribute('data-theme', 'dark');
+    themeLabel.textContent = 'ライトモード';
+    localStorage.setItem('theme', 'dark');
+  } else {
+    html.removeAttribute('data-theme');
+    themeLabel.textContent = 'ダークモード';
+    localStorage.setItem('theme', 'light');
+  }
+}
+
+const savedTheme = localStorage.getItem('theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+  setTheme(true);
+}
+
+themeBtn.addEventListener('click', () => {
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  setTheme(!isDark);
+});
+
+const links = document.querySelectorAll('.menu-item a');
+const sections = document.querySelectorAll('main section, .hero');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.offsetTop - 100;
+    if (pageYOffset >= top) {
+      current = s.getAttribute('id');
+    }
+  });
+  links.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('href') === '#' + current) {
+      l.classList.add('active');
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -6,6 +6,8 @@
 <title>AMAP-Studio Documentation</title>
 <meta name="description" content="Official documentation for AMAP-Studio - Unreal Engine 5.8 plugin for PMX/VMD pipeline, SDEF deformation, Bullet physics, and live input.">
 <link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="alternate" hreflang="ja" href="ja/">
 <style>
 :root {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -111,7 +113,7 @@ header.navbar {
   font-weight: 600;
 }
 
-.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-right { display: flex; align-items: center; gap: 14px; }
 .nav-link {
   color: var(--text-muted);
   text-decoration: none;
@@ -120,6 +122,48 @@ header.navbar {
   transition: color 0.15s;
 }
 .nav-link:hover { color: var(--primary); }
+
+.lang-dropdown { position: relative; }
+.lang-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.lang-btn:hover { border-color: var(--border-strong); color: var(--text-main); }
+.lang-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  min-width: 130px;
+  padding: 4px;
+  display: none;
+  z-index: 110;
+}
+.lang-dropdown:hover .lang-menu { display: block; }
+.lang-item {
+  display: block;
+  padding: 8px 12px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+.lang-item:hover { background: var(--bg-sidebar); color: var(--text-main); }
+.lang-item.active { color: var(--primary); font-weight: 600; background: var(--primary-subtle); }
+
 .theme-btn {
   background: transparent;
   border: 1px solid var(--border-subtle);
@@ -415,6 +459,16 @@ code {
     <a href="#quickstart" class="nav-link">Get Started</a>
     <a href="#features" class="nav-link">Features</a>
     <a href="#technical" class="nav-link">Technical Specs</a>
+    <div class="lang-dropdown">
+      <button class="lang-btn" aria-label="Select Language">
+        <span>Language: English</span>
+        <span>▼</span>
+      </button>
+      <div class="lang-menu">
+        <a href="./" class="lang-item active">English</a>
+        <a href="ja/" class="lang-item">日本語</a>
+      </div>
+    </div>
     <a href="https://github.com/hatoghx/AMAP-Studio" target="_blank" class="nav-link">GitHub</a>
     <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">
       <span id="themeLabel">Dark Mode</span>
