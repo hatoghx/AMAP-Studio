@@ -8,17 +8,6 @@
 <link rel="icon" type="image/png" href="assets/icon.png">
 <link rel="alternate" hreflang="en" href="./">
 <link rel="alternate" hreflang="ja" href="ja/">
-<script>
-(function() {
-  const pref = localStorage.getItem('lang');
-  const nav = navigator.language || navigator.userLanguage || '';
-  if (pref === 'ja' || (!pref && nav.toLowerCase().startsWith('ja'))) {
-    if (!sessionStorage.getItem('force_lang_en')) {
-      location.replace('ja/' + location.hash);
-    }
-  }
-})();
-</script>
 <style>
 :root {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -468,8 +457,8 @@ code {
       <a href="https://github.com/hatoghx/AMAP-Studio" target="_blank" class="nav-link">GitHub</a>
     </div>
     <div class="lang-switch">
-      <a href="./" class="lang-btn active" onclick="localStorage.setItem('lang','en');sessionStorage.setItem('force_lang_en','1');">EN</a>
-      <a href="ja/" class="lang-btn" onclick="localStorage.setItem('lang','ja');sessionStorage.removeItem('force_lang_en');">日本語</a>
+      <a href="./" class="lang-btn active">EN</a>
+      <a href="ja/" class="lang-btn">日本語</a>
     </div>
     <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
       <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
